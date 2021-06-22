@@ -18,7 +18,6 @@ JOIN shippers s
     ON o.shipperid = s.shipperid
     WHERE o.orderdate < '2012-08-09 00:00:00.000'
 
-
 -- Display the name and quantity of the products ordered in order with Id 10251. Sort by ProductName. Shows 3 records.
 SELECT
     p.productname,
