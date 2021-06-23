@@ -22,16 +22,34 @@ const db = require("../../data/db-config.js")
     Return from this function the resulting dataset.
   */
       async function find(){
-        const schemes = await db("schemes as sc")
-              .from("schemes")
-              .select("sc.*")
-              .leftJoin("steps as st","sc.scheme_id as schemeID","st.scheme_id as stepsID")
-              .groupBy("schemeID")
-              .orderBy("schemeID")
-              .count("st.step_id as number_of_steps")
-            return schemes
+        //const schemes = await db("schemes as sc")
+              //.from("schemes")
+              //.select("sc.*")
+              //.leftJoin("steps as st","sc.scheme_id as schemeID","st.scheme_id as stepsID")
+              //.groupBy("schemeID")
+              //.orderBy("schemeID")
+              //.count("st.step_id as number_of_steps")
+
+
+        // Lookup SQL Join vendiagram w/ example results for those kinds of joins
+        // What happens when tables have columns with the same name?
+        // What happens if tables don't have matching records, or more than one?
+        const schemes = await db
+          .select([
+            'schemes.*',
+            'steps.step_id',
+            'steps.scheme_id as sc_id' // Because both tables have a `scheme_id` column, we do this to make sure there is no conflic
+          ])
+          .from('schemes')
+          .leftJoin('steps', 'schemes.scheme_id', 'steps.scheme_id')
+          .groupBy('schemes.scheme_id') //so we only return one for each scheme id
+          .orderBy('schemes.scheme_id')
+          .count('steps.step_id as number_of_steps')
+        console.warn(schemes) //console.log to see our scheme records, console.warn -- to make it a different color and easier to see
+        return schemes
       }
 
+     // knex.select('*').from('users').leftJoin('accounts', 'users.id', 'accounts.user_id')
 
 
 async function findById(scheme_id) { // EXERCISE B
